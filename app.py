@@ -14,10 +14,6 @@ actions = ['aku', 'apa', 'bagaimana', 'berapa', 'di', 'F', 'halo', 'I', 'J', 'K'
 mp_holistic = mp.solutions.holistic
 holistic = mp_holistic.Holistic(min_detection_confidence=0.3, min_tracking_confidence=0.3)
 
-@app.route('/')
-def index():
-    return 'Hello, Flask!'
-
 
 @app.route('/translate', methods=['POST'])
 def translate():
@@ -47,28 +43,9 @@ def translate():
         }
         return jsonify(response), 500
 
-
-
-@app.route('/predict', methods=['POST'])
-def predict():
-    try:
-        # Get the input keypoints from the JSON request
-        data = request.get_json()
-        keypoints = np.array(data['keypoints'])
-
-        # Reshape the keypoints and make a prediction
-        sequence = np.expand_dims(keypoints, axis=0)
-        res = model.predict(sequence)[0]
-        action = actions[np.argmax(res)]
-        confidence = res[np.argmax(res)]
-        caption = f"{action} ({confidence * 100:.2f}%)"
-
-        # Create the JSON response
-        response = {'caption': caption}
-        return jsonify(response)
-    except Exception as e:
-        return jsonify({'error': str(e)}), 400
-
+@app.route('/')
+def index():
+    return 'Hello, Flask!'
 
 if __name__ == '__main__':
     app.run(debug=True)
